@@ -1,13 +1,12 @@
 using UnityEngine;
-using Mirror;
 
 namespace ClashOfGods.Gameplay.Summoner
 {
     /// <summary>
-    /// 召唤师控制器 - 挂载在玩家角色Prefab上（支持热重载）
-    /// Summoner controller - Attached to player character prefab (Hot reload compatible)
+    /// 召唤师控制器 - 挂载在玩家角色Prefab上（单机核心逻辑）
+    /// 网络同步通过 SummonerNetworkSync 组件实现
     /// </summary>
-    public class SummonerController : NetworkBehaviour
+    public class SummonerController : MonoBehaviour
     {
         [Header("Runtime Data")]
         public SummonerRuntimeData RuntimeData;
@@ -53,7 +52,6 @@ namespace ClashOfGods.Gameplay.Summoner
 
         private void Update()
         {
-            if (!isLocalPlayer) return;
             HandleMovement();
             HandleInput();
             UpdateSpiritRegen();
@@ -67,13 +65,9 @@ namespace ClashOfGods.Gameplay.Summoner
             float distance = Vector3.Distance(transform.position, targetPosition);
 
             if (distance > 0.1f)
-            {
                 CharacterController.Move(direction * MoveSpeed * Time.deltaTime);
-            }
             else
-            {
                 isMoving = false;
-            }
         }
 
         private void HandleInput()
